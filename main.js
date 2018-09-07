@@ -1,19 +1,22 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow} = require('electron')
+const { app, BrowserWindow } = require('electron')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 
-function createWindow () {
+function createWindow() {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600})
+  mainWindow = new BrowserWindow({ width: 800, height: 600 })
 
   // and load the index.html of the app.
   mainWindow.loadFile('index.html')
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
+
+  // 设置任务栏进度条
+  mainWindow.setProgressBar(0.5);
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -48,3 +51,11 @@ app.on('activate', function () {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+const ipc = require('electron').ipcMain;
+const dia = require("electron").dialog;
+ipc.on("mp3", function (event, arg) {
+  dia.showOpenDialog(mainWindow, { properties: ["openFile"] }, function (file) {
+    if (file)
+      event.returnValue = file;
+  });
+});
