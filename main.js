@@ -51,11 +51,3 @@ app.on('activate', function () {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
-const ipc = require('electron').ipcMain;
-const dia = require("electron").dialog;
-ipc.on("mp3", function (event, arg) {
-  dia.showOpenDialog(mainWindow, { properties: ["openFile"] }, function (file) {
-    if (file)
-      event.returnValue = file;
-  });
-});

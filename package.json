@@ -1,7 +1,7 @@
 {
-  "name": "electron-quick-start",
+  "name": "music_player",
   "version": "0.1.0",
-  "description": "A minimal Electron application",
+  "description": "A Electron application for music playing",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
@@ -9,9 +9,7 @@
   "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [
     "Electron",
-    "quick",
-    "start",
-    "tutorial",
+    "music",
     "demo"
   ],
   "author": "barret",
