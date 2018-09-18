@@ -1,14 +1,185 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Hello World!</title>
-  </head>
-  <body>
-
-    <script>
-      // You can also require other files to run in this process
-      require('./renderer.js')
-    </script>
-  </body>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<title>Music Player</title>
+	<link rel="icon" type="image/ico" href="./images/format.ico" />
+	<link rel="stylesheet" type="text/css" href="./css/font-awesome.min.css" />
+	<link rel="stylesheet" type="text/css" href="./css/index.css" />
+	<script>
+		window.$ = window.jQuery = require('jQuery');
+	</script>
+</head>
+<body onselectstart="return false">
+	<!-- page_list 页面左侧歌单 -->
+	<div class="page_list">
+		<div class="list_container" id="listContainer">
+			<div class="list list_me">
+				<p class="title">我的音乐</p>
+				<div class="btngroups">
+					<p class="btn local"><i class="fa fa-music" aria-hidden="true"></i>&nbsp;&nbsp;本地音乐</p>
+				</div>
+			</div>
+		</div>
+		<!-- 全屏小窗 -->
+		<div class="playlist_smallwindow clearfix">
+			<div class="poster" id="btnExpandPlayBox">
+				<img src="./images/temp_pic001.jpg" alt="" id="smallwindow_albumPic" />
+				<div class="poster_hoverback"><i class="fa fa-expand" aria-hidden="true"></i></div>
+			</div>
+			<div class="info">
+				<p class="songname" id="smallwindow_songName">-SONGNAME-</p>
+				<p class="singername" id="smallwindow_singerName">-SINGER-</p>
+			</div>
+		</div>
+	</div>
+	<!-- page_menu 页面顶部菜单 -->
+	<div class="page_menu clearfix">
+		<div class="menu_logo"><img src="./images/netease-logo.png" alt=""></div>
+		<div class="menu_btngroups">
+			<a href="javascript:void(0);" class="btn backward"><i class="fa fa-angle-left" aria-hidden="true"></i></a><!--
+			--><a href="javascript:void(0);" class="btn forward"><i class="fa fa-angle-right" aria-hidden="true"></i></a>
+		</div>
+	</div>
+	<!-- page_playerbar 页面底部播放控制条 -->
+	<div class="page_playerbar clearfix">
+		<!-- 播放控制按钮组 -->
+		<div class="playerbar_playbtngroup" id="playBtnGroup">
+			<div class="btn prev"><i class="fa fa-step-backward" aria-hidden="true"></i></div>
+			<div class="btn play"><i class="fa fa-play" aria-hidden="true"></i></div>
+			<div class="btn next"><i class="fa fa-step-forward" aria-hidden="true"></i></div>
+		</div>
+		<!-- 进度条 -->
+		<div class="playerbar_timeprogress">
+			<div class="progress" id="progress_box">
+				<div class="progress_cache" id="progress_cache"><!-- 缓冲条 --></div>
+				<div class="progress_curbar" id="progress_bar">
+					<div class="curbar_arc" id="progress_arc"></div>
+				</div>
+				<div class="time start" id="audio_currentTime">00:00</div>
+				<div class="time end" id="audio_duration">59:59</div>
+			</div>
+		</div>
+		<!-- 其他控制按钮组 -->
+		<div class="playerbar_others">
+			<div class="volume">
+				<div class="mutebtn" id="muteBtn" title="静音"><i class="fa fa-volume-up" aria-hidden="true"></i></div>
+				<div class="progress" id="vol_progress_box">
+					<div class="progress_curbar" id="vol_progress_bar">
+						<div class="curbar_arc" id="vol_progress_arc"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- page_main 歌单：我喜欢的音乐 -->
+	<div class="page_main R_page" id="pageMain">
+		<div class="main_container">
+			<div class="listcontainer"> 
+				<div class="listinfo clearfix">
+					<div class="info_listpic">
+						<img src="./images/temp_pic001.jpg" alt="" id="playlist_listPic" />
+					</div>
+					<div class="info_detailtext">
+						<div class="detail_name">
+							<span class="listtag">歌单</span>
+							<span class="listname" id="playlist_listName">歌单名称</span>
+						</div>
+						<div class="detail_btns">
+							<span class="btn playall"><i class="fa fa-play-circle-o" aria-hidden="true" style="color:#c52f30;"></i>&nbsp;&nbsp;播放全部</span><!--
+							--><span class="btn plus"><i class="fa fa-plus" aria-hidden="true"></i></span>
+						</div>
+					</div>
+				</div>
+				<div class="listtab">
+					<div class="tabbtns clearfix">
+						<label class="label_btn active" for="music" class="active">歌单列表</label>
+						<span class="menu_search">
+							<input type="text" placeholder="搜索歌单音乐" class="search_inp" />
+							<span class="search_btn"><i class="fa fa-search" aria-hidden="true"></i></span>
+						</span>
+					</div>
+					<!-- musiclist -->
+					<input type="radio" id="music" name="tablist" checked="" />
+					<div class="tabitem musiclist">
+						<table>
+							<thead>
+								<tr>
+									<th>&nbsp;&nbsp;</th>
+									<th>音乐标题</th>
+									<th>歌手</th>
+									<th>专辑</th>
+									<th>时长</th>
+								</tr>
+							</thead>
+							<tbody class="infolist" id="infoList_playlist">
+								<tr>
+									<td class="index">01</td>
+									<td>-SONGNAME-</td>
+									<td>-SINGER-</td>
+									<td>-ALBUM-</td>
+									<td>00:00</td>
+								</tr>
+							</tbody>
+							</tfoot>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- page_lyric 歌曲详情页 -->
+	<div class="page_songdetail" id="pageSongDetail">
+		<!-- 模糊背景 -->
+		<div class="g_blurbg" id="bgBlur" style="background-image:url('./images/al8.png');"></div>
+		<div class="maincontainer clearfix">
+			<div class="compressbtn" id="btnCompressPlayBox" title="收起音乐详情页">
+				<i class="fa fa-compress" aria-hidden="true"></i>
+			</div>
+			<div class="discsection">
+				<div class="disc_needle" id="discNeedle"><img src="./images/needle.png" alt=""></div>
+				<div class="disc_arc" id="bgDisc" style="background-image:url('./images/al8.png');">
+					<div class="poster"><img src="./images/disc-o.png" alt=""></div>
+				</div>
+			</div>
+			<div class="lyricsection">
+				<div class="lrcinfo" id="songDetail">
+					<p class="info_song"><span class="songname">--SONGNAME--</span><span class="label mv">MV</span><span class="label quality">320k</span></p>
+					<p class="info_album">
+						<span class="album">专辑：<span class="albumname">--ALBUMNAME--</span>
+						</span>
+						<span class="singer">歌手：<span class="singersname">--ALBUMNAME--</span>
+						</span>
+						<span class="origin">来源：<span class="originname">--ORIGIN--</span>
+						</span>
+					</p>
+				</div>
+				<div class="lrccontainer" id="lrcContainer">
+					<div class="lrcbox" id="lrcBox">
+						<!-- <p>暂无歌词</p> -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- audio -->
+	<audio id="audio">您的该版本浏览器不支持AUDIO标签！！！</audio>
+	<!-- backscreen -->
+	<div class="g_backscreen" id="backScreen"></div>
+	<!-- tips box -->
+	<div class="g_tipsbox" id="tipsBox">
+		<p class="tip tip_error show"><i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp;&nbsp;<span class="tiptext">ERROR STRING</span></p>
+		<p class="tip tip_info"><i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;&nbsp;<span class="tiptext">INFO STRING</span></p>
+		<p class="tip tip_ok"><i class="fa fa-check-circle" aria-hidden="true"></i>&nbsp;&nbsp;<span class="tiptext">OK STRING</span></p>
+	</div>
+	<!-- loading -->
+	<div class="g_loadingbox" id="loadingBox">
+		<i class="fa fa-spinner fa-spin fa-fw"></i>
+		<span class="loading_text"><!-- Loading... --></span>
+	</div>
+<!-- scripts -->
+<script>
+	require('./renderer.js')
+</script>
+</body>
 </html>
