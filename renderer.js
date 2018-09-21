@@ -26,9 +26,8 @@ $("#btnCompressPlayBox").on("click", function () {
 $("#addDir").on("click", function () {
     //打开目录对话框
     var path=ipc.sendSync("add-music-dir");
-    console.log(path);
-    // fs.readdir(path[0], function (err, files) {
-    //     if (err === null)
-    //         console.log(files);
-    // });
+    fs.readdir(path[0], function (err, files) {
+        if (err === null)
+            console.log(files);
+    });
 });

@@ -16,7 +16,7 @@ function createWindow() {
   mainWindow.loadFile('index.html')
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -57,7 +57,6 @@ ipc.on("add-music-dir", function (event, arg) {
   dialog.showOpenDialog(mainWindow, { properties: ['openDirectory'] }, function (path) {
     if (path) {
       event.returnValue = path;
-      console.log("main", path);
     }
   });
 });
