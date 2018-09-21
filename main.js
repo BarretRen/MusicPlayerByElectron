@@ -1,5 +1,5 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, Menu } = require('electron')
+const { app, BrowserWindow, Menu, dialog } = require('electron')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -51,3 +51,13 @@ app.on('activate', function () {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+const ipc = require("electron").ipcMain;
+
+ipc.on("add-music-dir", function (event, arg) {
+  dialog.showOpenDialog(mainWindow, { properties: ['openDirectory'] }, function (path) {
+    if (path) {
+      event.returnValue = path;
+      console.log("main", path);
+    }
+  });
+});

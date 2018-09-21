@@ -15,9 +15,8 @@
   "author": "barret",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^2.0.0"
-  },
-  "dependencies": {
+    "electron": "^2.0.0",
     "jquery": "^3.3.1"
   }
+
 }
