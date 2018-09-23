@@ -7,6 +7,24 @@ let songPath;
 let songs;
 let player = document.getElementById("player");
 
+//function utils
+//格式化时间
+function formatTime(seconds) {
+    var h = 0,
+        i = 0,
+        s = Math.floor(seconds);
+    h = Math.floor(s / 3600);
+    i = Math.floor((s % 3600) / 60);
+    s = s % 3600 % 60;
+
+    return {
+        H: h = h < 10 ? "0" + h : h,
+        I: i = i < 10 ? "0" + i : i,
+        S: s = s < 10 ? "0" + s : s
+    };
+};
+//end function utils
+
 // 展开与缩放歌曲详情页
 $("#btnExpandPlayBox").on("click", function () {
     // style: 展开歌曲详情页
@@ -85,17 +103,31 @@ $("#playBtnGroup").find(".play").on("click", function () {
     if (!player.src) {
         //显示提示消息
         ipc.send("msg-box", "没有播放资源，请选择曲目");
-    } 
+    }
     else {
         if (!player.paused) {
             player.pause();
             // play按钮样式
             stylePlayBtn($("#playBtnGroup").find(".play"), "pause");
-        } 
+        }
         else {
             player.play();
             // play按钮样式
             stylePlayBtn($("#playBtnGroup").find(".play"), "play");
         }
     }
+});
+
+//播放器监听，进度条，歌曲完成重播
+player.addEventListener("timeupdate", function () {
+    var objTimeCurTime = formatTime(this.currentTime);
+    var objTimeDuration = formatTime(this.duration);
+    $("#audio_currentTime").html(objTimeCurTime.I + ":" + objTimeCurTime.S);
+    $("#audio_duration").html(objTimeDuration.I + ":" + objTimeDuration.S);
+    // 更新进度条
+    $("#progress_bar").css("width", (this.currentTime / this.duration).toFixed(4) * 100 + "%");
+});
+
+player.addEventListener("ended", function () {
+    player.play();
 });
