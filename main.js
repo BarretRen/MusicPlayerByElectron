@@ -53,10 +53,20 @@ app.on('activate', function () {
 // code. You can also put them in separate files and require them here.
 const ipc = require("electron").ipcMain;
 
+//添加音乐目录
 ipc.on("add-music-dir", function (event, arg) {
   dialog.showOpenDialog(mainWindow, { properties: ['openDirectory'] }, function (path) {
     if (path) {
       event.returnValue = path;
     }
+  });
+});
+
+//显示消息提示
+ipc.on("msg-box", (event, arg) => {
+  dialog.showMessageBox({
+    type: "info",
+    title:"注意",
+    message:arg
   });
 });

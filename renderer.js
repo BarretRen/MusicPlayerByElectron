@@ -5,11 +5,11 @@ const ipc = require("electron").ipcRenderer;
 const fs = require("fs");
 let songPath;
 let songs;
+let player = document.getElementById("player");
 
 // 展开与缩放歌曲详情页
 $("#btnExpandPlayBox").on("click", function () {
     // style: 展开歌曲详情页
-    console.log('i am here');
     $("#pageSongDetail").css({
         "top": "60px",
         "right": 0,
@@ -31,14 +31,22 @@ $("#addDir").on("click", function () {
     fs.readdir(path[0], function (err, files) {
         if (err === null) {
             initPlaylist(files);
-            songPath=path[0];
+            songPath = path[0];
             songs = files;
+            registerTrDbclick();
         }
     });
 });
 
-//列表栏双击事件
-
+function registerTrDbclick() {
+    //列表栏双击事件
+    $("tr").dblclick(function () {
+        player.src = songPath + "\\" + $(this).children("td").eq(1).text();
+        player.play();
+        $("#smallwindow_songName").html($(this).children("td").eq(1).text());
+        stylePlayBtn($("#playBtnGroup").find(".play"), "play");
+    });
+}
 
 // 初始化歌单数据
 function initPlaylist(data) {
@@ -65,18 +73,29 @@ function initPlaylist(data) {
     $("#infoList_playlist").append(docFrag);
 }
 
-//点击播放音乐
-function playSongInList(ele, event) {
-    var index = ele.index;
-    $("#audio").src=songPath+"\\"+songs[index];
-    console.log(songPath+"\\"+songs[index]);
-    $("#audio").play();
-    stylePlayBtn($playBtnGroup.find(".play"),"play");
-}
-
 //设置播放按钮样式
-function stylePlayBtn($ele,playType) {
-	var html_play='<i class="fa fa-play" aria-hidden="true"></i>';
-	var html_pause='<i class="fa fa-pause" aria-hidden="true"></i>';
-	$ele.html((playType==="play"?html_pause:html_play));
+function stylePlayBtn($ele, playType) {
+    var html_play = '<i class="fa fa-play" aria-hidden="true"></i>';
+    var html_pause = '<i class="fa fa-pause" aria-hidden="true"></i>';
+    $ele.html((playType === "play" ? html_pause : html_play));
 };
+
+//播放暂停按钮点击事件
+$("#playBtnGroup").find(".play").on("click", function () {
+    if (!player.src) {
+        //显示提示消息
+        ipc.send("msg-box", "没有播放资源，请选择曲目");
+    } 
+    else {
+        if (!player.paused) {
+            player.pause();
+            // play按钮样式
+            stylePlayBtn($("#playBtnGroup").find(".play"), "pause");
+        } 
+        else {
+            player.play();
+            // play按钮样式
+            stylePlayBtn($("#playBtnGroup").find(".play"), "play");
+        }
+    }
+});
