@@ -131,3 +131,17 @@ player.addEventListener("timeupdate", function () {
 player.addEventListener("ended", function () {
     player.play();
 });
+
+//点击进度条，跳转歌曲位置
+$("#progress_box").on("click", function (ev) {
+    var ev = ev ? ev : window.event;
+    var ex = ev.clientX;
+    var arcOffset = $("#progress_box").get(0).getBoundingClientRect();
+    var disX = ex - arcOffset.left;
+    var positon = ((disX / $("#progress_box").width()) * 100).toFixed(2);
+    positon = positon <= 0 ? 0 : (positon >= 100 ? 100 : positon);
+    if(player.src){
+        $("#progress_bar").css("width", positon+"%");
+        player.currentTime=positon*player.duration/100;
+    }
+});
