@@ -66,7 +66,7 @@ ipc.on("add-music-dir", function (event, arg) {
 ipc.on("msg-box", (event, arg) => {
   dialog.showMessageBox({
     type: "info",
-    title:"注意",
-    message:arg
+    title: "注意",
+    message: arg
   });
 });

@@ -77,6 +77,10 @@ function initPlaylist(data) {
     $("#infoList_playlist").html(' ');
     // 生成歌单列表
     for (var i = 0; i < songLen; i++) {
+        //检查是不是mp3文件
+        if (data[i].toLocaleLowerCase().lastIndexOf('mp3') != (data[i].length - 3)){
+            continue;
+        }
         // 创建tr 设置tr
         tr = document.createElement("tr");
         tr.dataset.index = i;
@@ -141,9 +145,9 @@ $("#progress_box").on("click", function (ev) {
     var disX = ex - arcOffset.left;
     var positon = ((disX / $("#progress_box").width()) * 100).toFixed(2);
     positon = positon <= 0 ? 0 : (positon >= 100 ? 100 : positon);
-    if(player.src){
-        $("#progress_bar").css("width", positon+"%");
-        player.currentTime=positon*player.duration/100;
+    if (player.src) {
+        $("#progress_bar").css("width", positon + "%");
+        player.currentTime = positon * player.duration / 100;
     }
 });
 
@@ -155,24 +159,24 @@ $("#vol_progress_box").on("click", function (ev) {
     var disX = ex - arcOffset.left;
     var positon = ((disX / $("#vol_progress_box").width()) * 100).toFixed(2);
     positon = positon <= 0 ? 0 : (positon >= 100 ? 100 : positon);
-    if(player.src){
-        $("#vol_progress_bar").css("width", positon+"%");
-        player.volume=(positon/100).toFixed(2);
-        if (player.volume<=0) {
+    if (player.src) {
+        $("#vol_progress_bar").css("width", positon + "%");
+        player.volume = (positon / 100).toFixed(2);
+        if (player.volume <= 0) {
             $("#muteBtn").html('<i class="fa fa-volume-off" aria-hidden="true"></i>')
         }
     }
 });
 
 //静音按钮点击事件
-$("#muteBtn").on("click", function(){
+$("#muteBtn").on("click", function () {
     if (!player.muted) {
-        player.muted=true;
-        $("#muteBtn").html('<i class="fa fa-volume-off" aria-hidden="true"></i>').attr("title","恢复音量");
-        $("#vol_progress_bar").css("display","none");
+        player.muted = true;
+        $("#muteBtn").html('<i class="fa fa-volume-off" aria-hidden="true"></i>').attr("title", "恢复音量");
+        $("#vol_progress_bar").css("display", "none");
     } else {
-        player.muted=false;
-        $("#muteBtn").html('<i class="fa fa-volume-up" aria-hidden="true"></i>').attr("title","静音");
-        $("#vol_progress_bar").css("display","block");
+        player.muted = false;
+        $("#muteBtn").html('<i class="fa fa-volume-up" aria-hidden="true"></i>').attr("title", "静音");
+        $("#vol_progress_bar").css("display", "block");
     }
 });
