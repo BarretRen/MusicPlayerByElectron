@@ -62,6 +62,7 @@ function registerTrDbclick() {
         player.src = songPath + "\\" + $(this).children("td").eq(1).text();
         player.play();
         $("#smallwindow_songName").html($(this).children("td").eq(1).text());
+        $("#songName_detail").html($(this).children("td").eq(1).text());
         stylePlayBtn($("#playBtnGroup").find(".play"), "play");
         $("#vol_progress_bar").css("width", "100%");
     });
@@ -136,6 +137,27 @@ player.addEventListener("timeupdate", function () {
 player.addEventListener("ended", function () {
     player.play();
 });
+
+// 监听音频播放事件
+player.addEventListener("play",function () {
+    // 转盘动画恢复
+    $("#bgDisc").css({
+        "-webkit-animation-play-state":"running",
+        "animation-play-state":"running"
+    });
+    // 磁针放下
+    $("#discNeedle").addClass("play");
+});	
+// 监听音频暂停事件
+player.addEventListener("pause",function () {
+    // 转盘动画停止
+    $("#bgDisc").css({
+        "-webkit-animation-play-state":"paused",
+        "animation-play-state":"paused"
+    });
+    // 磁针抬起
+    $("#discNeedle").removeClass("play");
+});	
 
 //点击进度条，跳转歌曲位置
 $("#progress_box").on("click", function (ev) {
