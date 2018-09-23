@@ -63,6 +63,7 @@ function registerTrDbclick() {
         player.play();
         $("#smallwindow_songName").html($(this).children("td").eq(1).text());
         stylePlayBtn($("#playBtnGroup").find(".play"), "play");
+        $("#vol_progress_bar").css("width", "100%");
     });
 }
 
@@ -143,5 +144,19 @@ $("#progress_box").on("click", function (ev) {
     if(player.src){
         $("#progress_bar").css("width", positon+"%");
         player.currentTime=positon*player.duration/100;
+    }
+});
+
+//点击音量条
+$("#vol_progress_box").on("click", function (ev) {
+    var ev = ev ? ev : window.event;
+    var ex = ev.clientX;
+    var arcOffset = $("#vol_progress_box").get(0).getBoundingClientRect();
+    var disX = ex - arcOffset.left;
+    var positon = ((disX / $("#vol_progress_box").width()) * 100).toFixed(2);
+    positon = positon <= 0 ? 0 : (positon >= 100 ? 100 : positon);
+    if(player.src){
+        $("#vol_progress_bar").css("width", positon+"%");
+        player.volume=(positon/100).toFixed(2);
     }
 });
