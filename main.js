@@ -32,7 +32,6 @@ function createWindow() {
   mainWindow.webContents.on('did-finish-load', function() {
     fs.readFile("./songs.txt", 'utf-8', function (err, data) {
       if (!err) {
-        console.log(data);
         mainWindow.webContents.send("init-path", data);
       }
     });

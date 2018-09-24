@@ -247,13 +247,38 @@ $("#muteBtn").on("click", function () {
 });
 
 //播放全部按钮点击
-$("#playAll").on("click", function(){
-    if(songs.length>0){
-        currentSong=0;
+$("#playAll").on("click", function () {
+    if (songs.length > 0) {
+        currentSong = 0;
         player.src = songPath + "\\" + songs[currentSong];
         player.play();
         $("#smallwindow_songName").html(songs[currentSong]);
         $("#songName_detail").html(songs[currentSong]);
         stylePlayBtn($("#playBtnGroup").find(".play"), "play");
+    }
+});
+
+//搜索框
+$("#search_btn").on("click", function () {
+    if (songs.length > 0) {
+        var input = $("#search_input").val();
+        if (input != "") {
+            var index = 0;
+            for (x in songs) {
+                index = songs[x].indexOf(input);
+                if (index != -1) {
+                    currentSong = x;
+                    player.src = songPath + "\\" + songs[currentSong];
+                    player.play();
+                    $("#smallwindow_songName").html(songs[currentSong]);
+                    $("#songName_detail").html(songs[currentSong]);
+                    stylePlayBtn($("#playBtnGroup").find(".play"), "play");
+                    break;
+                }
+            }
+        }
+        else {
+            console.log("input is null");
+        }
     }
 });
