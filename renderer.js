@@ -4,7 +4,8 @@
 const ipc = require("electron").ipcRenderer;
 const fs = require("fs");
 let songPath;
-let songs;
+let songs = new Array();
+let currentSong = 0;
 let player = document.getElementById("player");
 
 //接收出书后path，填充table
@@ -60,7 +61,6 @@ function loadSongsFromPath(path) {
         if (err === null) {
             initPlaylist(files);
             songPath = path;
-            songs = files;
             registerTrDbclick();
         }
     });
@@ -69,6 +69,7 @@ function loadSongsFromPath(path) {
 function registerTrDbclick() {
     //列表栏双击事件
     $("tr").dblclick(function () {
+        currentSong = $(this).children("td").eq(0).text() - 1;
         player.src = songPath + "\\" + $(this).children("td").eq(1).text();
         player.play();
         $("#smallwindow_songName").html($(this).children("td").eq(1).text());
@@ -92,6 +93,7 @@ function initPlaylist(data) {
         if (data[i].toLocaleLowerCase().lastIndexOf('mp3') != (data[i].length - 3)) {
             continue;
         }
+        songs.push(data[i]);
         // 创建tr 设置tr
         tr = document.createElement("tr");
         tr.dataset.index = i;
@@ -133,6 +135,37 @@ $("#playBtnGroup").find(".play").on("click", function () {
         }
     }
 });
+
+//播放按钮前一首点击事件
+$("#playBtnGroup").find(".prev").on("click", function () {
+    if (songs.length > 0) {
+        if (currentSong > 0) {
+            currentSong--;
+        }
+        player.src = songPath + "\\" + songs[currentSong];
+        player.play();
+        $("#smallwindow_songName").html(songs[currentSong]);
+        $("#songName_detail").html(songs[currentSong]);
+        stylePlayBtn($("#playBtnGroup").find(".play"), "play");
+    }
+})
+
+//播放按钮后一首点击事件
+$("#playBtnGroup").find(".next").on("click", function () {
+    if (songs.length > 0) {
+        if (currentSong >= (songs.length - 1)) {
+            currentSong = 0;
+        }
+        else {
+            currentSong++;
+        }
+        player.src = songPath + "\\" + songs[currentSong];
+        player.play();
+        $("#smallwindow_songName").html(songs[currentSong]);
+        $("#songName_detail").html(songs[currentSong]);
+        stylePlayBtn($("#playBtnGroup").find(".play"), "play");
+    }
+})
 
 //播放器监听，进度条，歌曲完成重播
 player.addEventListener("timeupdate", function () {
