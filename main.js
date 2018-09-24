@@ -1,5 +1,7 @@
 // Modules to control application life and create native browser window
 const { app, BrowserWindow, Menu, dialog } = require('electron')
+const ipc = require("electron").ipcMain;
+const fs = require("fs");
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -25,6 +27,16 @@ function createWindow() {
     // when you should delete the corresponding element.
     mainWindow = null
   })
+
+  //read song.txt to get the path and list the songs
+  mainWindow.webContents.on('did-finish-load', function() {
+    fs.readFile("./songs.txt", 'utf-8', function (err, data) {
+      if (!err) {
+        console.log(data);
+        mainWindow.webContents.send("init-path", data);
+      }
+    });
+  });
 }
 
 // This method will be called when Electron has finished
@@ -51,13 +63,18 @@ app.on('activate', function () {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
-const ipc = require("electron").ipcMain;
+
 
 //添加音乐目录
 ipc.on("add-music-dir", function (event, arg) {
   dialog.showOpenDialog(mainWindow, { properties: ['openDirectory'] }, function (path) {
     if (path) {
-      event.returnValue = path;
+      event.returnValue = path[0];
+      fs.writeFile("./songs.txt", path, function (err) {
+        if (err) {
+          console.log("error" + err.message);
+        }
+      });
     }
   });
 });

@@ -7,6 +7,11 @@ let songPath;
 let songs;
 let player = document.getElementById("player");
 
+//接收出书后path，填充table
+ipc.on("init-path", function (event, arg) {
+    loadSongsFromPath(arg);
+});
+
 //function utils
 //格式化时间
 function formatTime(seconds) {
@@ -46,15 +51,20 @@ $("#btnCompressPlayBox").on("click", function () {
 $("#addDir").on("click", function () {
     //打开目录对话框
     var path = ipc.sendSync("add-music-dir");
-    fs.readdir(path[0], function (err, files) {
+    loadSongsFromPath(path);
+
+});
+
+function loadSongsFromPath(path) {
+    fs.readdir(path, function (err, files) {
         if (err === null) {
             initPlaylist(files);
-            songPath = path[0];
+            songPath = path;
             songs = files;
             registerTrDbclick();
         }
     });
-});
+}
 
 function registerTrDbclick() {
     //列表栏双击事件
@@ -79,7 +89,7 @@ function initPlaylist(data) {
     // 生成歌单列表
     for (var i = 0; i < songLen; i++) {
         //检查是不是mp3文件
-        if (data[i].toLocaleLowerCase().lastIndexOf('mp3') != (data[i].length - 3)){
+        if (data[i].toLocaleLowerCase().lastIndexOf('mp3') != (data[i].length - 3)) {
             continue;
         }
         // 创建tr 设置tr
@@ -139,25 +149,25 @@ player.addEventListener("ended", function () {
 });
 
 // 监听音频播放事件
-player.addEventListener("play",function () {
+player.addEventListener("play", function () {
     // 转盘动画恢复
     $("#bgDisc").css({
-        "-webkit-animation-play-state":"running",
-        "animation-play-state":"running"
+        "-webkit-animation-play-state": "running",
+        "animation-play-state": "running"
     });
     // 磁针放下
     $("#discNeedle").addClass("play");
-});	
+});
 // 监听音频暂停事件
-player.addEventListener("pause",function () {
+player.addEventListener("pause", function () {
     // 转盘动画停止
     $("#bgDisc").css({
-        "-webkit-animation-play-state":"paused",
-        "animation-play-state":"paused"
+        "-webkit-animation-play-state": "paused",
+        "animation-play-state": "paused"
     });
     // 磁针抬起
     $("#discNeedle").removeClass("play");
-});	
+});
 
 //点击进度条，跳转歌曲位置
 $("#progress_box").on("click", function (ev) {
