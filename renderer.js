@@ -245,3 +245,15 @@ $("#muteBtn").on("click", function () {
         $("#vol_progress_bar").css("display", "block");
     }
 });
+
+//播放全部按钮点击
+$("#playAll").on("click", function(){
+    if(songs.length>0){
+        currentSong=0;
+        player.src = songPath + "\\" + songs[currentSong];
+        player.play();
+        $("#smallwindow_songName").html(songs[currentSong]);
+        $("#songName_detail").html(songs[currentSong]);
+        stylePlayBtn($("#playBtnGroup").find(".play"), "play");
+    }
+});
